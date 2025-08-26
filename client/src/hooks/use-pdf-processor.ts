@@ -9,7 +9,7 @@ export function usePDFProcessor() {
 
   const processFiles = async (
     files: File[],
-    operation: 'merge' | 'compress' | 'rotate' | 'extract' | 'remove' | 'protect' | 'image-to-pdf',
+    operation: 'merge' | 'compress' | 'rotate' | 'extract' | 'remove' | 'protect' | 'image-to-pdf' | 'images-to-pdf' | 'pdf-to-images' | 'grayscale' | 'repair' | 'unlock',
     options: any = {}
   ) => {
     if (files.length === 0) {
@@ -61,6 +61,40 @@ export function usePDFProcessor() {
         case 'image-to-pdf':
           result = await PDFProcessor.convertImageToPDF(files[0]);
           filename = `${files[0].name.split('.')[0]}.pdf`;
+          break;
+        case 'images-to-pdf':
+          result = await PDFProcessor.convertImagesToPDF(files);
+          filename = 'converted-images.pdf';
+          break;
+        case 'pdf-to-images':
+          // This returns image data instead of PDF bytes
+          const images = await PDFProcessor.convertPDFToImages(files[0], options.format || 'jpg', options.quality || 'high');
+          // Download each image
+          images.forEach((img: any, index: number) => {
+            const link = document.createElement('a');
+            link.href = img.dataUrl;
+            link.download = img.filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+          });
+          
+          toast({
+            title: "Success!",
+            description: `Downloaded ${images.length} image files.`,
+          });
+          return; // Exit early since we don't have a single file to download
+        case 'grayscale':
+          result = await PDFProcessor.grayscalePDF(files[0]);
+          filename = `grayscale-${files[0].name}`;
+          break;
+        case 'repair':
+          result = await PDFProcessor.repairPDF(files[0]);
+          filename = `repaired-${files[0].name}`;
+          break;
+        case 'unlock':
+          result = await PDFProcessor.unlockPDF(files[0], options.password);
+          filename = `unlocked-${files[0].name}`;
           break;
         default:
           throw new Error('Unsupported operation');

@@ -152,5 +152,103 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   }, 60 * 60 * 1000); // 1 hour
 
+  // PDF to Image conversion endpoint (server-side processing)
+  app.post("/api/pdf-to-images", upload.single('file'), async (req: MulterRequest, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ 
+          success: false, 
+          message: "No PDF file uploaded" 
+        });
+      }
+
+      const { format = 'jpg', quality = 'high' } = req.body;
+      
+      // Use pdf2pic for server-side PDF to image conversion
+      const pdf2pic = require('pdf2pic');
+      
+      const convert = pdf2pic.fromPath(req.file.path, {
+        density: quality === 'high' ? 300 : quality === 'medium' ? 150 : 72,
+        saveFilename: `${req.file.filename}`,
+        savePath: './uploads/',
+        format: format,
+        width: 2480,
+        height: 3508
+      });
+
+      const results = await convert.bulk(-1, { responseType: 'buffer' });
+      
+      // Clean up uploaded file
+      fs.unlink(req.file.path, (err) => {
+        if (err) console.error('Error deleting uploaded file:', err);
+      });
+
+      res.json({ 
+        success: true, 
+        images: results.map((result, index) => ({
+          page: index + 1,
+          data: result.buffer.toString('base64'),
+          filename: `${req.file.originalname.split('.')[0]}_page_${index + 1}.${format}`
+        }))
+      });
+    } catch (error) {
+      console.error("PDF to image conversion error:", error);
+      
+      // Clean up uploaded file on error
+      if (req.file) {
+        fs.unlink(req.file.path, (err) => {
+          if (err) console.error('Error deleting uploaded file:', err);
+        });
+      }
+      
+      res.status(500).json({ 
+        success: false, 
+        message: "Failed to convert PDF to images. This feature requires server-side processing." 
+      });
+    }
+  });
+
+  // PDF text extraction endpoint
+  app.post("/api/extract-text", upload.single('file'), async (req: MulterRequest, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ 
+          success: false, 
+          message: "No PDF file uploaded" 
+        });
+      }
+
+      const pdfParse = require('pdf-parse');
+      const dataBuffer = fs.readFileSync(req.file.path);
+      const data = await pdfParse(dataBuffer);
+      
+      // Clean up uploaded file
+      fs.unlink(req.file.path, (err) => {
+        if (err) console.error('Error deleting uploaded file:', err);
+      });
+
+      res.json({ 
+        success: true, 
+        text: data.text,
+        pages: data.numpages,
+        info: data.info
+      });
+    } catch (error) {
+      console.error("Text extraction error:", error);
+      
+      // Clean up uploaded file on error
+      if (req.file) {
+        fs.unlink(req.file.path, (err) => {
+          if (err) console.error('Error deleting uploaded file:', err);
+        });
+      }
+      
+      res.status(500).json({ 
+        success: false, 
+        message: "Failed to extract text from PDF" 
+      });
+    }
+  });
+
   return httpServer;
 }
