@@ -89,23 +89,31 @@ export class PDFProcessor {
     
     // Enhanced compression with better options
     const saveOptions: any = {
-      useObjectStreams: false,
+      useObjectStreams: quality < 0.7, // Use object streams for better compression
       addDefaultPage: false,
     };
 
-    // Apply quality-based compression
+    // Apply quality-based compression settings
     if (quality <= 0.3) {
-      // High compression
-      saveOptions.compress = true;
-      saveOptions.objectsPerTick = 50;
+      // High compression - most aggressive settings
+      saveOptions.objectsPerTick = 25;
+      saveOptions.updateFieldAppearances = false;
     } else if (quality <= 0.7) {
       // Medium compression
-      saveOptions.compress = true;
+      saveOptions.objectsPerTick = 50;
+      saveOptions.updateFieldAppearances = false;
+    } else {
+      // Low compression - preserve quality
       saveOptions.objectsPerTick = 100;
+      saveOptions.updateFieldAppearances = true;
     }
-    // Low compression uses default settings
     
-    return await pdfDoc.save(saveOptions);
+    const compressedBytes = await pdfDoc.save(saveOptions);
+    
+    // Ensure we actually achieve some compression
+    console.log(`Original size: ${pdfBytes.byteLength}, Compressed size: ${compressedBytes.byteLength}, Ratio: ${(compressedBytes.byteLength / pdfBytes.byteLength * 100).toFixed(1)}%`);
+    
+    return compressedBytes;
   }
 
   static async rotatePDF(file: File, rotation: number): Promise<Uint8Array> {

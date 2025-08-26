@@ -48,7 +48,13 @@ export default function WordToPdf() {
         throw new Error('Failed to convert document to PDF');
       }
 
-      const result = await response.json();
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        const result = await response.json();
+        throw new Error(result.message || 'Document conversion not implemented yet');
+      } else {
+        throw new Error('Server returned invalid response format');
+      }
       
       clearInterval(progressInterval);
       setProgress(100);

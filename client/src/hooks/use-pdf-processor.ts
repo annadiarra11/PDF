@@ -85,6 +85,12 @@ export function usePDFProcessor() {
           });
           return; // Exit early since we don't have a single file to download
         case 'grayscale':
+          // Grayscale conversion is complex - show informative message
+          toast({
+            title: "Grayscale Conversion",
+            description: "Note: True grayscale conversion requires specialized processing. The PDF will be processed but colors may not be fully converted.",
+            variant: "default",
+          });
           result = await PDFProcessor.grayscalePDF(files[0]);
           filename = `grayscale-${files[0].name}`;
           break;

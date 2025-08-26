@@ -45,7 +45,13 @@ export default function TxtToPdf() {
         throw new Error('Failed to convert text file to PDF');
       }
 
-      const result = await response.json();
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        const result = await response.json();
+        throw new Error(result.message || 'Text conversion not implemented yet');
+      } else {
+        throw new Error('Server returned invalid response format');
+      }
       
       clearInterval(progressInterval);
       setProgress(100);

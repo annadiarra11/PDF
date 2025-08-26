@@ -25,6 +25,10 @@ export default function RotatePdf() {
   };
 
   const handleRotate = async () => {
+    if (!rotation) {
+      alert('Please select a rotation angle');
+      return;
+    }
     await processFiles(files, 'rotate', { rotation: parseInt(rotation) });
     setFiles([]);
   };

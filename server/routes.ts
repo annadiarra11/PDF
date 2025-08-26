@@ -14,10 +14,24 @@ const upload = multer({
   dest: 'uploads/',
   limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
   fileFilter: (req: any, file: any, cb: any) => {
-    if (file.mimetype === 'application/pdf' || file.mimetype.startsWith('image/')) {
+    const allowedTypes = [
+      'application/pdf',
+      'image/jpeg',
+      'image/jpg', 
+      'image/png',
+      'text/plain',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
+      'application/msword', // .doc
+      'application/vnd.ms-powerpoint', // .ppt
+      'application/vnd.openxmlformats-officedocument.presentationml.presentation', // .pptx
+      'application/vnd.ms-excel', // .xls
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' // .xlsx
+    ];
+    
+    if (allowedTypes.includes(file.mimetype)) {
       cb(null, true);
     } else {
-      cb(new Error('Only PDF and image files are allowed'));
+      cb(new Error('File type not supported'));
     }
   }
 });
@@ -71,6 +85,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
         success: false, 
         message: "Failed to upload file" 
       });
+    }
+  });
+
+  // Document to PDF conversion endpoint
+  app.post("/api/document-to-pdf", upload.single('file'), async (req: MulterRequest, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ success: false, message: "No file uploaded" });
+      }
+
+      // For document conversion, we'd need specialized libraries like mammoth for Word, etc.
+      // For now, return a proper JSON error response
+      
+      // Clean up uploaded file
+      fs.unlinkSync(req.file.path);
+      
+      res.json({
+        success: false,
+        message: "Document conversion is not yet implemented on the server side. Please use client-side processing."
+      });
+    } catch (error) {
+      console.error("Document conversion error:", error);
+      res.status(500).json({ success: false, message: "Failed to convert document" });
+    }
+  });
+
+  // PDF to text extraction endpoint
+  app.post("/api/pdf-to-text", upload.single('file'), async (req: MulterRequest, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ success: false, message: "No file uploaded" });
+      }
+
+      // Text extraction would need specialized library like pdf-parse
+      // For now, return a proper JSON error response
+      
+      // Clean up uploaded file
+      fs.unlinkSync(req.file.path);
+      
+      res.json({
+        success: false,
+        message: "PDF text extraction is not yet implemented on the server side. Please use client-side processing."
+      });
+    } catch (error) {
+      console.error("PDF text extraction error:", error);
+      res.status(500).json({ success: false, message: "Failed to extract text from PDF" });
     }
   });
 
