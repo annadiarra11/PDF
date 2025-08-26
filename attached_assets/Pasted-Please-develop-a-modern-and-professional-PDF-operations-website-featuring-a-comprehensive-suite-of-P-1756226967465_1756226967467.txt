@@ -1,0 +1,48 @@
+Please develop a modern and professional PDF operations website featuring a comprehensive suite of PDF tools and advanced functionalities. The website should be responsive, SEO-friendly, and compatible with all major browsers.
+Core PDF Tools to Implement:
+Merge PDF Tool: Combine multiple PDF files into a single document.
+Rotate PDF Tool: Adjust the orientation of pages within a PDF document.
+Remove Pages Tool: Delete specified pages from a PDF document.
+Organize PDF Tool: Reorder pages within a PDF document to create a custom sequence.
+Compress PDF Tool: Reduce the file size of PDF documents for optimized sharing and storage.
+Grayscale PDF Tool: Convert PDF documents to grayscale for printing purposes.
+Extract PDF Pages Tool: Create a new PDF document containing only selected pages from an existing file.
+Repair PDF Tool: Provide limited capabilities to fix corrupted or damaged PDF files.
+Image to PDF Converters:
+JPG to PDF Tool
+PNG to PDF Tool
+BMP to PDF Tool
+TIFF to PDF Tool
+Document to PDF Converters:
+Word to PDF Tool (with an understanding of limited conversion capabilities)
+PowerPoint to PDF Tool (with an understanding of limited conversion capabilities)
+TXT to PDF Tool
+Excel to PDF Tool
+PDF to Image Converters:
+PDF to JPG Tool
+PDF to PNG Tool
+PDF to BMP Tool
+PDF to TIFF Tool
+PDF to Document/Text Converters:
+PDF to Word Tool (should convert only text, with images and formatting not preserved, and some font limitations)
+PDF to PowerPoint Tool (with an understanding of limited conversion capabilities)
+PDF to TXT Tool
+PDF to Archive Tool:
+PDF to ZIP Tool: Convert PDF documents to compressed ZIP files.
+Security Tools:
+Protect PDF Tool: Add password protection to PDF documents.
+Unlock PDF Tool: Remove password protection from PDF documents.
+Additional Website Features and Requirements:
+Security Guaranteed: Implement a system to automatically delete uploaded files from the server after one hour to ensure user privacy and security.
+Configurable File Size: The maximum input file size for each tool should be easily configurable.
+Browser Compatibility: Ensure full compatibility across all modern web browsers.
+Responsive Design: The website must be fully responsive, providing an optimal user experience on desktops, tablets, and mobile devices.
+SEO Friendly: Structure the website for excellent search engine optimization.
+Google Analytics Ready: Integrate Google Analytics for easy tracking of website performance and user engagement.
+Multiple Language Support: Implement a robust system for multiple language translations to cater to a global audience.
+Essential Static Pages: Include the following static content pages:
+About Us
+Terms and Conditions
+Privacy Policy
+Contact Us (including a functional contact form)
+The design should be clean, intuitive, and user-friendly, providing a seamless experience for all PDF operations. Focus on performance and reliability.
