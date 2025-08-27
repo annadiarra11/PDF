@@ -3,19 +3,20 @@ import { useDropzone } from "react-dropzone";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { FileText, File, Upload, X } from "lucide-react";
+import { FileText, File, Upload, X, AlertCircle } from "lucide-react";
 import { formatFileSize } from "@/lib/pdf-utils";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import Layout from "@/components/layout/layout";
 
-export default function WordToPdf() {
+export default function ExcelToPdf() {
   const [files, setFiles] = useState<File[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: { 
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'],
-      'application/msword': ['.doc']
+      'application/vnd.ms-excel': ['.xls'],
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx']
     },
     onDrop: (acceptedFiles) => setFiles(acceptedFiles),
     multiple: false
@@ -44,31 +45,22 @@ export default function WordToPdf() {
         body: formData,
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to convert document to PDF');
-      }
-
       const result = await response.json();
       
       clearInterval(progressInterval);
       setProgress(100);
 
       if (result.success) {
-        // Handle successful conversion with HTML content
-        if (result.html) {
-          alert('Document content extracted successfully. Full PDF conversion requires additional server setup.');
-        } else {
-          alert('Document converted successfully!');
-        }
-        setFiles([]);
+        alert('Excel file processed, but full PDF conversion requires additional setup.');
       } else {
-        throw new Error(result.message || 'Conversion failed');
+        alert('Excel to PDF conversion: ' + result.message);
       }
 
     } catch (error) {
-      console.error('Document conversion error:', error);
-      alert('Failed to convert document: ' + (error instanceof Error ? error.message : 'Unknown error'));
+      console.error('Excel conversion error:', error);
+      alert('Failed to convert Excel: ' + (error instanceof Error ? error.message : 'Unknown error'));
     } finally {
+      clearInterval(progressInterval);
       setIsProcessing(false);
       setProgress(0);
     }
@@ -78,20 +70,27 @@ export default function WordToPdf() {
     <Layout>
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold mb-4" data-testid="page-title">Word to PDF</h1>
+          <h1 className="text-4xl font-bold mb-4" data-testid="page-title">Excel to PDF</h1>
           <p className="text-xl text-muted-foreground mb-6" data-testid="page-description">
-            Convert Microsoft Word documents to PDF format
+            Convert Microsoft Excel spreadsheets to PDF format
           </p>
         </div>
+
+        <Alert className="mb-6">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            Excel to PDF conversion requires specialized server setup. For best results, consider using Microsoft Office Online or dedicated conversion services.
+          </AlertDescription>
+        </Alert>
 
         <Card className="mb-6">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <File className="h-5 w-5" />
-              Upload Word Document
+              Upload Excel Spreadsheet
             </CardTitle>
             <CardDescription>
-              Select a Word document (.docx or .doc) to convert to PDF.
+              Select an Excel spreadsheet (.xlsx or .xls) to convert to PDF.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -105,11 +104,11 @@ export default function WordToPdf() {
               <input {...getInputProps()} data-testid="file-input" />
               <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
               {isDragActive ? (
-                <p className="text-lg">Drop the Word document here...</p>
+                <p className="text-lg">Drop the Excel file here...</p>
               ) : (
                 <div>
-                  <p className="text-lg mb-2">Drag & drop a Word document here, or click to select</p>
-                  <p className="text-sm text-muted-foreground">Supports .docx and .doc files • Maximum file size: 10MB</p>
+                  <p className="text-lg mb-2">Drag & drop an Excel spreadsheet here, or click to select</p>
+                  <p className="text-sm text-muted-foreground">Supports .xlsx and .xls files • Maximum file size: 10MB</p>
                 </div>
               )}
             </div>
@@ -120,7 +119,7 @@ export default function WordToPdf() {
                 {files.map((file, index) => (
                   <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg" data-testid={`file-item-${index}`}>
                     <div className="flex items-center gap-3">
-                      <File className="h-5 w-5 text-blue-500" />
+                      <File className="h-5 w-5 text-green-500" />
                       <div>
                         <p className="font-medium" data-testid={`file-name-${index}`}>{file.name}</p>
                         <p className="text-sm text-muted-foreground" data-testid={`file-size-${index}`}>{formatFileSize(file.size)}</p>
@@ -153,7 +152,7 @@ export default function WordToPdf() {
               {isProcessing ? (
                 <div className="flex items-center gap-2">
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                  Converting...
+                  Processing...
                 </div>
               ) : (
                 <>

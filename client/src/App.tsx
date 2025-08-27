@@ -24,6 +24,9 @@ import ProtectPdf from "@/pages/tools/protect-pdf";
 import UnlockPdf from "@/pages/tools/unlock-pdf";
 import PdfToTxt from "@/pages/tools/pdf-to-txt";
 import WordToPdf from "@/pages/tools/word-to-pdf";
+import PowerPointToPdf from "@/pages/tools/powerpoint-to-pdf";
+import ExcelToPdf from "@/pages/tools/excel-to-pdf";
+import PdfToZip from "@/pages/tools/pdf-to-zip";
 import TxtToPdf from "@/pages/tools/txt-to-pdf";
 import NotFound from "@/pages/not-found";
 
@@ -51,6 +54,9 @@ function Router() {
       <Route path="/tools/unlock-pdf" component={UnlockPdf} />
       <Route path="/tools/pdf-to-txt" component={PdfToTxt} />
       <Route path="/tools/word-to-pdf" component={WordToPdf} />
+      <Route path="/tools/powerpoint-to-pdf" component={PowerPointToPdf} />
+      <Route path="/tools/excel-to-pdf" component={ExcelToPdf} />
+      <Route path="/tools/pdf-to-zip" component={PdfToZip} />
       <Route path="/tools/txt-to-pdf" component={TxtToPdf} />
       <Route component={NotFound} />
     </Switch>

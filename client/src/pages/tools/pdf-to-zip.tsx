@@ -3,20 +3,17 @@ import { useDropzone } from "react-dropzone";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { FileText, File, Upload, X } from "lucide-react";
+import { Archive, File, Upload, X } from "lucide-react";
 import { formatFileSize } from "@/lib/pdf-utils";
 import Layout from "@/components/layout/layout";
 
-export default function WordToPdf() {
+export default function PdfToZip() {
   const [files, setFiles] = useState<File[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    accept: { 
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'],
-      'application/msword': ['.doc']
-    },
+    accept: { 'application/pdf': ['.pdf'] },
     onDrop: (acceptedFiles) => setFiles(acceptedFiles),
     multiple: false
   });
@@ -39,36 +36,38 @@ export default function WordToPdf() {
       const formData = new FormData();
       formData.append('file', files[0]);
 
-      const response = await fetch('/api/document-to-pdf', {
+      const response = await fetch('/api/pdf-to-zip', {
         method: 'POST',
         body: formData,
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to convert document to PDF');
-      }
-
-      const result = await response.json();
-      
       clearInterval(progressInterval);
       setProgress(100);
 
-      if (result.success) {
-        // Handle successful conversion with HTML content
-        if (result.html) {
-          alert('Document content extracted successfully. Full PDF conversion requires additional server setup.');
-        } else {
-          alert('Document converted successfully!');
-        }
+      if (response.ok) {
+        // Handle ZIP file download
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = files[0].name.replace('.pdf', '_pages.zip');
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        
         setFiles([]);
+        alert('PDF pages converted to ZIP successfully!');
       } else {
-        throw new Error(result.message || 'Conversion failed');
+        const result = await response.json();
+        throw new Error(result.message || 'Failed to convert PDF to ZIP');
       }
 
     } catch (error) {
-      console.error('Document conversion error:', error);
-      alert('Failed to convert document: ' + (error instanceof Error ? error.message : 'Unknown error'));
+      console.error('PDF to ZIP conversion error:', error);
+      alert('Failed to convert PDF to ZIP: ' + (error instanceof Error ? error.message : 'Unknown error'));
     } finally {
+      clearInterval(progressInterval);
       setIsProcessing(false);
       setProgress(0);
     }
@@ -78,9 +77,9 @@ export default function WordToPdf() {
     <Layout>
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold mb-4" data-testid="page-title">Word to PDF</h1>
+          <h1 className="text-4xl font-bold mb-4" data-testid="page-title">PDF to ZIP Pages</h1>
           <p className="text-xl text-muted-foreground mb-6" data-testid="page-description">
-            Convert Microsoft Word documents to PDF format
+            Convert PDF pages to individual images and download as a ZIP file
           </p>
         </div>
 
@@ -88,10 +87,10 @@ export default function WordToPdf() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <File className="h-5 w-5" />
-              Upload Word Document
+              Upload PDF Document
             </CardTitle>
             <CardDescription>
-              Select a Word document (.docx or .doc) to convert to PDF.
+              Select a PDF file to extract all pages as individual images in a ZIP archive.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -105,11 +104,11 @@ export default function WordToPdf() {
               <input {...getInputProps()} data-testid="file-input" />
               <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
               {isDragActive ? (
-                <p className="text-lg">Drop the Word document here...</p>
+                <p className="text-lg">Drop the PDF file here...</p>
               ) : (
                 <div>
-                  <p className="text-lg mb-2">Drag & drop a Word document here, or click to select</p>
-                  <p className="text-sm text-muted-foreground">Supports .docx and .doc files • Maximum file size: 10MB</p>
+                  <p className="text-lg mb-2">Drag & drop a PDF document here, or click to select</p>
+                  <p className="text-sm text-muted-foreground">Supports PDF files • Maximum file size: 10MB</p>
                 </div>
               )}
             </div>
@@ -120,7 +119,7 @@ export default function WordToPdf() {
                 {files.map((file, index) => (
                   <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg" data-testid={`file-item-${index}`}>
                     <div className="flex items-center gap-3">
-                      <File className="h-5 w-5 text-blue-500" />
+                      <File className="h-5 w-5 text-red-500" />
                       <div>
                         <p className="font-medium" data-testid={`file-name-${index}`}>{file.name}</p>
                         <p className="text-sm text-muted-foreground" data-testid={`file-size-${index}`}>{formatFileSize(file.size)}</p>
@@ -157,8 +156,8 @@ export default function WordToPdf() {
                 </div>
               ) : (
                 <>
-                  <FileText className="mr-2 h-4 w-4" />
-                  Convert to PDF
+                  <Archive className="mr-2 h-4 w-4" />
+                  Convert to ZIP
                 </>
               )}
             </Button>

@@ -95,16 +95,69 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ success: false, message: "No file uploaded" });
       }
 
-      // For document conversion, we'd need specialized libraries like mammoth for Word, etc.
-      // For now, return a proper JSON error response
+      const filePath = req.file.path;
+      const fileExtension = path.extname(req.file.originalname).toLowerCase();
       
-      // Clean up uploaded file
-      fs.unlinkSync(req.file.path);
-      
-      res.json({
-        success: false,
-        message: "Document conversion is not yet implemented on the server side. Please use client-side processing."
-      });
+      try {
+        let pdfBuffer: Buffer;
+        
+        if (fileExtension === '.docx' || fileExtension === '.doc') {
+          // Handle Word documents with mammoth
+          const mammoth = require('mammoth');
+          const result = await mammoth.convertToHtml({ path: filePath });
+          
+          // Convert HTML to PDF using a basic approach
+          // For now, return the HTML content and let client handle PDF generation
+          const htmlContent = result.value;
+          
+          // Clean up uploaded file
+          fs.unlinkSync(filePath);
+          
+          res.json({
+            success: true,
+            html: htmlContent,
+            filename: req.file.originalname.replace(/\.(docx?|pptx?|xlsx?)$/i, '.pdf'),
+            message: "Document content extracted. Please use client-side PDF generation."
+          });
+          return;
+        } else if (fileExtension === '.pptx' || fileExtension === '.ppt') {
+          // Clean up uploaded file
+          fs.unlinkSync(filePath);
+          
+          res.json({
+            success: false,
+            message: "PowerPoint conversion requires specialized server setup. Please use online conversion tools."
+          });
+          return;
+        } else if (fileExtension === '.xlsx' || fileExtension === '.xls') {
+          // Clean up uploaded file
+          fs.unlinkSync(filePath);
+          
+          res.json({
+            success: false,
+            message: "Excel conversion requires specialized server setup. Please use online conversion tools."
+          });
+          return;
+        } else {
+          // Clean up uploaded file
+          fs.unlinkSync(filePath);
+          
+          res.json({
+            success: false,
+            message: "Unsupported file format for conversion."
+          });
+          return;
+        }
+      } catch (conversionError) {
+        // Clean up uploaded file
+        fs.unlinkSync(filePath);
+        
+        console.error("Conversion error:", conversionError);
+        res.json({
+          success: false,
+          message: "Failed to convert document. The file may be corrupted or in an unsupported format."
+        });
+      }
     } catch (error) {
       console.error("Document conversion error:", error);
       res.status(500).json({ success: false, message: "Failed to convert document" });
@@ -245,10 +298,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       res.json({ 
         success: true, 
-        images: results.map((result, index) => ({
+        images: results.map((result: any, index: number) => ({
           page: index + 1,
           data: result.buffer.toString('base64'),
-          filename: `${req.file.originalname.split('.')[0]}_page_${index + 1}.${format}`
+          filename: `${req.file!.originalname.split('.')[0]}_page_${index + 1}.${format}`
         }))
       });
     } catch (error) {
@@ -306,6 +359,71 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ 
         success: false, 
         message: "Failed to extract text from PDF" 
+      });
+    }
+  });
+
+  // PDF to ZIP pages endpoint
+  app.post("/api/pdf-to-zip", upload.single('file'), async (req: MulterRequest, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ 
+          success: false, 
+          message: "No PDF file uploaded" 
+        });
+      }
+
+      // Use pdf2pic to convert pages to images, then create a ZIP
+      const pdf2pic = require('pdf2pic');
+      const archiver = require('archiver');
+      
+      const convert = pdf2pic.fromPath(req.file.path, {
+        density: 150,
+        saveFilename: `page`,
+        savePath: './uploads/',
+        format: 'jpg',
+        width: 2480,
+        height: 3508
+      });
+
+      const results = await convert.bulk(-1, { responseType: 'buffer' });
+      
+      // Create ZIP archive
+      const archive = archiver('zip', { zlib: { level: 9 } });
+      const buffers: Buffer[] = [];
+      
+      archive.on('data', (chunk: Buffer) => buffers.push(chunk));
+      
+      // Add each page to the ZIP
+      results.forEach((result: any, index: number) => {
+        archive.append(result.buffer, { name: `page_${index + 1}.jpg` });
+      });
+      
+      await archive.finalize();
+      
+      const zipBuffer = Buffer.concat(buffers);
+      
+      // Clean up uploaded file
+      fs.unlink(req.file.path, (err) => {
+        if (err) console.error('Error deleting uploaded file:', err);
+      });
+
+      res.setHeader('Content-Type', 'application/zip');
+      res.setHeader('Content-Disposition', `attachment; filename="${req.file.originalname.replace('.pdf', '_pages.zip')}"`);
+      res.send(zipBuffer);
+    } catch (error) {
+      console.error("PDF to ZIP conversion error:", error);
+      
+      // Clean up uploaded file on error
+      if (req.file) {
+        fs.unlink(req.file.path, (err) => {
+          if (err) console.error('Error deleting uploaded file:', err);
+        });
+      }
+      
+      res.status(500).json({ 
+        success: false, 
+        message: "Failed to convert PDF pages to ZIP. This feature requires server-side processing." 
       });
     }
   });
