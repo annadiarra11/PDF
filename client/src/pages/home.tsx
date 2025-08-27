@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "wouter";
+import { useTranslation } from "react-i18next";
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
 import FileUpload from "@/components/ui/file-upload";
@@ -30,6 +31,7 @@ import {
 } from "lucide-react";
 
 export default function Home() {
+  const { t } = useTranslation();
   const { processFiles, isProcessing, progress } = usePDFProcessor();
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
@@ -40,50 +42,50 @@ export default function Home() {
 
   const coreTools = [
     {
-      title: "Merge PDF",
-      description: "Combine multiple PDF files into a single document",
+      title: t('mergePdf'),
+      description: t('mergePdfDesc'),
       icon: FileText,
       href: "/tools/merge-pdf"
     },
     {
-      title: "Rotate PDF", 
-      description: "Adjust the orientation of pages within your PDF",
+      title: t('rotatePdf'), 
+      description: t('rotatePdfDesc'),
       icon: RotateCw,
       href: "/tools/rotate-pdf"
     },
     {
-      title: "Extract Pages",
-      description: "Create new PDF with selected pages from existing file",
+      title: t('extractPages'),
+      description: t('extractPagesDesc'),
       icon: Scissors,
       href: "/tools/extract-pages"
     },
     {
-      title: "Compress PDF",
-      description: "Reduce file size for optimized sharing and storage",
+      title: t('compressPdf'),
+      description: t('compressPdfDesc'),
       icon: Minimize2,
       href: "/tools/compress-pdf"
     },
     {
-      title: "Organize PDF",
-      description: "Reorder pages to create a custom sequence",
+      title: t('organizePdf'),
+      description: t('organizePdfDesc'),
       icon: ArrowUpDown,
       href: "/tools/organize-pdf"
     },
     {
-      title: "Remove Pages",
-      description: "Delete specified pages from PDF document",
+      title: t('removePages'),
+      description: t('removePagesDesc'),
       icon: Trash2,
       href: "/tools/remove-pages"
     },
     {
-      title: "Grayscale PDF",
-      description: "Convert PDF documents to grayscale for printing",
+      title: t('grayscalePdf'),
+      description: t('grayscalePdfDesc'),
       icon: Palette,
       href: "/tools/grayscale-pdf"
     },
     {
-      title: "Repair PDF",
-      description: "Fix corrupted or damaged PDF files",
+      title: t('repairPdf'),
+      description: t('repairPdfDesc'),
       icon: Wrench,
       href: "/tools/repair-pdf"
     }
@@ -91,38 +93,38 @@ export default function Home() {
 
   const convertToTools = [
     {
-      title: "JPG to PDF",
-      description: "Convert JPEG images to PDF format",
+      title: t('jpgToPdf'),
+      description: t('jpgToPdfDesc'),
       icon: Image,
       href: "/tools/jpg-to-pdf"
     },
     {
-      title: "PNG to PDF",
-      description: "Convert PNG images to PDF format", 
+      title: t('pngToPdf'),
+      description: t('pngToPdfDesc'), 
       icon: Image,
       href: "/tools/png-to-pdf"
     },
     {
-      title: "Word to PDF",
-      description: "Convert Word documents to PDF format",
+      title: t('wordToPdf'),
+      description: t('wordToPdfDesc'),
       icon: File,
       href: "/tools/word-to-pdf"
     },
     {
-      title: "PowerPoint to PDF",
-      description: "Convert PowerPoint presentations to PDF",
+      title: t('powerpointToPdf'),
+      description: t('powerpointToPdfDesc'),
       icon: Presentation,
       href: "/tools/powerpoint-to-pdf"
     },
     {
-      title: "Excel to PDF",
-      description: "Convert Excel spreadsheets to PDF",
+      title: t('excelToPdf'),
+      description: t('excelToPdfDesc'),
       icon: FileSpreadsheet,
       href: "/tools/excel-to-pdf"
     },
     {
-      title: "TXT to PDF",
-      description: "Convert text files to PDF format",
+      title: t('txtToPdf'),
+      description: t('txtToPdfDesc'),
       icon: FileText,
       href: "/tools/txt-to-pdf"
     }
@@ -130,32 +132,32 @@ export default function Home() {
 
   const convertFromTools = [
     {
-      title: "PDF to JPG",
-      description: "Convert PDF pages to JPEG images",
+      title: t('pdfToJpg'),
+      description: t('pdfToJpgDesc'),
       icon: Image,
       href: "/tools/pdf-to-jpg"
     },
     {
-      title: "PDF to PNG", 
-      description: "Convert PDF pages to PNG images",
+      title: t('pdfToPng'), 
+      description: t('pdfToPngDesc'),
       icon: Image,
       href: "/tools/pdf-to-png"
     },
     {
-      title: "PDF to Word",
-      description: "Extract text from PDF to Word document",
+      title: t('pdfToWord'),
+      description: t('pdfToWordDesc'),
       icon: File,
       href: "/tools/pdf-to-word"
     },
     {
-      title: "PDF to TXT",
-      description: "Extract plain text from PDF documents",
+      title: t('pdfToTxt'),
+      description: t('pdfToTxtDesc'),
       icon: FileText,
       href: "/tools/pdf-to-txt"
     },
     {
-      title: "PDF to ZIP",
-      description: "Convert PDF to compressed ZIP archive",
+      title: t('pdfToZip'),
+      description: t('pdfToZipDesc'),
       icon: FileText,
       href: "/tools/pdf-to-zip"
     }
@@ -163,14 +165,14 @@ export default function Home() {
 
   const securityTools = [
     {
-      title: "Protect PDF",
-      description: "Add password protection to your PDF documents",
+      title: t('protectPdf'),
+      description: t('protectPdfDesc'),
       icon: Lock,
       href: "/tools/protect-pdf"
     },
     {
-      title: "Unlock PDF",
-      description: "Remove password protection from PDF files",
+      title: t('unlockPdf'),
+      description: t('unlockPdfDesc'),
       icon: Unlock,
       href: "/tools/unlock-pdf"
     }
@@ -224,12 +226,10 @@ export default function Home() {
         <div className="container mx-auto px-4 lg:px-8">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-4xl lg:text-6xl font-bold text-gray-900 mb-6">
-              Professional PDF Operations
-              <span className="text-primary block mt-2">Made Simple</span>
+              {t('welcome')}
             </h2>
             <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-              Comprehensive suite of PDF tools for merging, converting, compressing, and editing. 
-              Secure, fast, and completely free to use.
+              {t('description')}
             </p>
             
             {/* Quick Upload Zone */}

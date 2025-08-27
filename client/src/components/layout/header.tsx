@@ -1,19 +1,19 @@
-import { useState } from "react";
 import { Link, useLocation } from "wouter";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu, FileText } from "lucide-react";
+import LanguageSelector from "@/components/ui/language-selector";
 
 export default function Header() {
   const [location] = useLocation();
-  const [language, setLanguage] = useState("en");
+  const { t } = useTranslation();
   
   const navigation = [
-    { name: "Tools", href: "/#tools" },
-    { name: "Features", href: "/#features" },
-    { name: "About", href: "/about" },
-    { name: "Contact", href: "/contact" },
+    { name: t('allTools'), href: "/#tools" },
+    { name: t('features'), href: "/#features" },
+    { name: t('about'), href: "/about" },
+    { name: t('contact'), href: "/contact" },
   ];
 
   const isActive = (href: string) => {
@@ -54,17 +54,7 @@ export default function Header() {
 
           <div className="flex items-center space-x-4">
             {/* Language Selector */}
-            <Select value={language} onValueChange={setLanguage}>
-              <SelectTrigger className="w-20 bg-gray-100 border-0" data-testid="language-selector">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="en">🇺🇸 EN</SelectItem>
-                <SelectItem value="es">🇪🇸 ES</SelectItem>
-                <SelectItem value="fr">🇫🇷 FR</SelectItem>
-                <SelectItem value="de">🇩🇪 DE</SelectItem>
-              </SelectContent>
-            </Select>
+            <LanguageSelector />
             
             {/* Mobile Menu */}
             <Sheet>
