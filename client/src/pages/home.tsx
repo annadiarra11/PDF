@@ -181,38 +181,38 @@ export default function Home() {
   const features = [
     {
       icon: Shield,
-      title: "100% Secure",
-      description: "All files are automatically deleted from our servers after 1 hour. Your privacy is guaranteed.",
+      title: t('secureTitle'),
+      description: t('secureDesc'),
       color: "text-success"
     },
     {
       icon: Zap,
-      title: "Lightning Fast", 
-      description: "Client-side processing means instant results without uploading to servers for most operations.",
+      title: t('fastTitle'), 
+      description: t('fastDesc'),
       color: "text-primary"
     },
     {
       icon: Globe,
-      title: "Universal Compatibility",
-      description: "Works on all modern browsers and devices. No software installation required.",
+      title: t('compatibleTitle'),
+      description: t('compatibleDesc'),
       color: "text-warning"
     },
     {
       icon: DollarSign,
-      title: "Completely Free",
-      description: "All tools are free to use with no hidden fees, subscriptions, or registration required.",
+      title: t('freeTitle'),
+      description: t('freeDesc'),
       color: "text-success"
     },
     {
       icon: Smartphone,
-      title: "Mobile Optimized",
-      description: "Fully responsive design that works perfectly on smartphones, tablets, and desktops.",
+      title: t('mobileTitle'),
+      description: t('mobileDesc'),
       color: "text-primary"
     },
     {
       icon: Languages,
-      title: "Multi-Language",
-      description: "Available in multiple languages to serve users worldwide with localized interfaces.",
+      title: t('multiLangTitle'),
+      description: t('multiLangDesc'),
       color: "text-warning"
     }
   ];
@@ -274,7 +274,7 @@ export default function Home() {
           <div className="mb-16">
             <h3 className="text-2xl font-bold mb-8 text-center lg:text-left flex items-center">
               <FileText className="text-primary mr-3" />
-              Core PDF Operations
+              {t('corePdfOperations')}
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {coreTools.map((tool) => (
@@ -294,7 +294,7 @@ export default function Home() {
           <div className="mb-16">
             <h3 className="text-2xl font-bold mb-8 text-center lg:text-left flex items-center">
               <FileText className="text-success mr-3" />
-              Convert to PDF
+              {t('convertToPdf')}
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {convertToTools.map((tool) => (
@@ -314,7 +314,7 @@ export default function Home() {
           <div className="mb-16">
             <h3 className="text-2xl font-bold mb-8 text-center lg:text-left flex items-center">
               <FileText className="text-warning mr-3" />
-              Convert from PDF
+              {t('convertFromPdf')}
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {convertFromTools.map((tool) => (
@@ -334,7 +334,7 @@ export default function Home() {
           <div className="mb-16">
             <h3 className="text-2xl font-bold mb-8 text-center lg:text-left flex items-center">
               <Shield className="text-danger mr-3" />
-              Security Tools
+              {t('securityTools')}
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {securityTools.map((tool) => (
@@ -356,8 +356,8 @@ export default function Home() {
       <section id="features" className="bg-white py-16 lg:py-24">
         <div className="container mx-auto px-4 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl lg:text-4xl font-bold mb-4">Why Choose PDFKit Pro?</h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">Built with security, performance, and ease of use in mind.</p>
+            <h2 className="text-3xl lg:text-4xl font-bold mb-4">{t('whyChoosePdfkit')}</h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">{t('whyChoosePdfkitDesc')}</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -379,10 +379,9 @@ export default function Home() {
                 <i className="fas fa-info-circle text-blue-500 text-xl"></i>
               </div>
               <div>
-                <h4 className="text-lg font-semibold text-blue-900 mb-2">Configurable File Limits</h4>
+                <h4 className="text-lg font-semibold text-blue-900 mb-2">{t('configurableFileLimits')}</h4>
                 <p className="text-blue-800">
-                  File size limits can be easily configured per tool to meet your specific requirements. 
-                  Current limit: <span className="font-semibold">10MB per file</span>
+                  {t('configurableFileLimitsDesc')} <span className="font-semibold">10MB {t('perFile')}</span>
                 </p>
               </div>
             </div>
@@ -395,8 +394,8 @@ export default function Home() {
         <div className="container mx-auto px-4 lg:px-8">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-12">
-              <h2 className="text-3xl lg:text-4xl font-bold mb-6">About PDFKit Pro</h2>
-              <p className="text-xl text-gray-600">Empowering users with professional PDF tools that are secure, fast, and accessible to everyone.</p>
+              <h2 className="text-3xl lg:text-4xl font-bold mb-6">{t('aboutPdfkit')}</h2>
+              <p className="text-xl text-gray-600">{t('aboutPdfkitDesc')}</p>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -408,23 +407,22 @@ export default function Home() {
                 />
               </div>
               <div className="space-y-6">
-                <h3 className="text-2xl font-bold">Our Mission</h3>
+                <h3 className="text-2xl font-bold">{t('ourMission')}</h3>
                 <p className="text-gray-600 text-lg leading-relaxed">
-                  We believe everyone should have access to powerful PDF tools without compromising on security or paying expensive subscription fees. 
-                  PDFKit Pro was built to democratize document processing with enterprise-grade functionality.
+                  {t('missionDesc')}
                 </p>
                 <div className="space-y-4">
                   <div className="flex items-center space-x-3">
                     <i className="fas fa-check-circle text-success text-xl"></i>
-                    <span className="text-gray-700">Privacy-first approach with automatic file deletion</span>
+                    <span className="text-gray-700">{t('privacyFirst')}</span>
                   </div>
                   <div className="flex items-center space-x-3">
                     <i className="fas fa-check-circle text-success text-xl"></i>
-                    <span className="text-gray-700">Client-side processing for maximum security</span>
+                    <span className="text-gray-700">{t('clientSideProcessing')}</span>
                   </div>
                   <div className="flex items-center space-x-3">
                     <i className="fas fa-check-circle text-success text-xl"></i>
-                    <span className="text-gray-700">No registration or personal information required</span>
+                    <span className="text-gray-700">{t('noRegistration')}</span>
                   </div>
                 </div>
               </div>

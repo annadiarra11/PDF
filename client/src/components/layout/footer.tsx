@@ -1,29 +1,31 @@
 import { Link } from "wouter";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useTranslation } from "react-i18next";
 import { FileText, Twitter, Linkedin, Github } from "lucide-react";
+import LanguageSelector from "@/components/ui/language-selector";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
+  const { t } = useTranslation();
 
   const quickLinks = [
-    { name: "PDF Tools", href: "/#tools" },
-    { name: "Features", href: "/#features" },
-    { name: "About Us", href: "/about" },
-    { name: "Contact", href: "/contact" },
+    { name: t('pdfTools'), href: "/#tools" },
+    { name: t('features'), href: "/#features" },
+    { name: t('aboutUs'), href: "/about" },
+    { name: t('contact'), href: "/contact" },
   ];
 
   const popularTools = [
-    { name: "Merge PDF", href: "/tools/merge-pdf" },
-    { name: "Compress PDF", href: "/tools/compress-pdf" },
-    { name: "JPG to PDF", href: "/tools/jpg-to-pdf" },
-    { name: "PDF to JPG", href: "/tools/pdf-to-jpg" },
+    { name: t('mergePdf'), href: "/tools/merge-pdf" },
+    { name: t('compressPdf'), href: "/tools/compress-pdf" },
+    { name: t('jpgToPdf'), href: "/tools/jpg-to-pdf" },
+    { name: t('pdfToJpg'), href: "/tools/pdf-to-jpg" },
   ];
 
   const legalLinks = [
-    { name: "Privacy Policy", href: "/privacy" },
-    { name: "Terms & Conditions", href: "/terms" },
-    { name: "Cookie Policy", href: "#" },
-    { name: "GDPR Compliance", href: "#" },
+    { name: t('privacyPolicy'), href: "/privacy" },
+    { name: t('termsConditions'), href: "/terms" },
+    { name: t('cookiePolicy'), href: "#" },
+    { name: t('gdprCompliance'), href: "#" },
   ];
 
   return (
@@ -39,7 +41,7 @@ export default function Footer() {
               <h3 className="text-xl font-bold text-white">PDFKit Pro</h3>
             </div>
             <p className="text-gray-400 mb-4">
-              Professional PDF operations made simple, secure, and accessible to everyone.
+              {t('companyDesc')}
             </p>
             <div className="flex space-x-4">
               <a href="#" className="text-gray-400 hover:text-primary transition-colors" data-testid="social-twitter">
@@ -56,7 +58,7 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h4 className="text-lg font-semibold text-white mb-4">Quick Links</h4>
+            <h4 className="text-lg font-semibold text-white mb-4">{t('quickLinks')}</h4>
             <ul className="space-y-2">
               {quickLinks.map((link) => (
                 <li key={link.name}>
@@ -74,7 +76,7 @@ export default function Footer() {
 
           {/* Popular Tools */}
           <div>
-            <h4 className="text-lg font-semibold text-white mb-4">Popular Tools</h4>
+            <h4 className="text-lg font-semibold text-white mb-4">{t('popularTools')}</h4>
             <ul className="space-y-2">
               {popularTools.map((tool) => (
                 <li key={tool.name}>
@@ -92,7 +94,7 @@ export default function Footer() {
 
           {/* Legal */}
           <div>
-            <h4 className="text-lg font-semibold text-white mb-4">Legal</h4>
+            <h4 className="text-lg font-semibold text-white mb-4">{t('legal')}</h4>
             <ul className="space-y-2">
               {legalLinks.map((link) => (
                 <li key={link.name}>
@@ -111,21 +113,11 @@ export default function Footer() {
 
         <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-400 text-sm" data-testid="copyright">
-            © {currentYear} PDFKit Pro. All rights reserved.
+            © {currentYear} PDFKit Pro. {t('allRightsReserved')}
           </p>
           <div className="flex items-center space-x-4 mt-4 md:mt-0">
-            <span className="text-gray-400 text-sm">Language:</span>
-            <Select defaultValue="en">
-              <SelectTrigger className="w-32 bg-gray-800 border-gray-700 text-gray-300" data-testid="footer-language-selector">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="en">English</SelectItem>
-                <SelectItem value="es">Español</SelectItem>
-                <SelectItem value="fr">Français</SelectItem>
-                <SelectItem value="de">Deutsch</SelectItem>
-              </SelectContent>
-            </Select>
+            <span className="text-gray-400 text-sm">{t('language')}:</span>
+            <LanguageSelector />
           </div>
         </div>
       </div>
