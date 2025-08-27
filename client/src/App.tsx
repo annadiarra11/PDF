@@ -27,6 +27,7 @@ import WordToPdf from "@/pages/tools/word-to-pdf";
 import PowerPointToPdf from "@/pages/tools/powerpoint-to-pdf";
 import ExcelToPdf from "@/pages/tools/excel-to-pdf";
 import PdfToZip from "@/pages/tools/pdf-to-zip";
+import PdfToWord from "@/pages/tools/pdf-to-word";
 import TxtToPdf from "@/pages/tools/txt-to-pdf";
 import NotFound from "@/pages/not-found";
 
@@ -57,6 +58,7 @@ function Router() {
       <Route path="/tools/powerpoint-to-pdf" component={PowerPointToPdf} />
       <Route path="/tools/excel-to-pdf" component={ExcelToPdf} />
       <Route path="/tools/pdf-to-zip" component={PdfToZip} />
+      <Route path="/tools/pdf-to-word" component={PdfToWord} />
       <Route path="/tools/txt-to-pdf" component={TxtToPdf} />
       <Route component={NotFound} />
     </Switch>

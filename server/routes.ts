@@ -363,6 +363,64 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // PDF to Word conversion endpoint
+  app.post("/api/pdf-to-word", upload.single('file'), async (req: MulterRequest, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ 
+          success: false, 
+          message: "No PDF file uploaded" 
+        });
+      }
+
+      // Use pdf-parse to extract text from PDF
+      const pdfParse = require('pdf-parse');
+      const dataBuffer = fs.readFileSync(req.file.path);
+      const data = await pdfParse(dataBuffer);
+      
+      // Use officegen to create a Word document
+      const officegen = require('officegen');
+      const docx = officegen('docx');
+      
+      // Add the extracted text to the Word document
+      const pObj = docx.createP();
+      pObj.addText(data.text);
+      
+      // Generate the Word document
+      const chunks: Buffer[] = [];
+      docx.on('data', (chunk: Buffer) => chunks.push(chunk));
+      
+      const wordBuffer = await new Promise<Buffer>((resolve, reject) => {
+        docx.on('end', () => resolve(Buffer.concat(chunks)));
+        docx.on('error', reject);
+        docx.generate();
+      });
+      
+      // Clean up uploaded file
+      fs.unlink(req.file.path, (err) => {
+        if (err) console.error('Error deleting uploaded file:', err);
+      });
+
+      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+      res.setHeader('Content-Disposition', `attachment; filename="${req.file.originalname.replace('.pdf', '.docx')}"`);
+      res.send(wordBuffer);
+    } catch (error) {
+      console.error("PDF to Word conversion error:", error);
+      
+      // Clean up uploaded file on error
+      if (req.file) {
+        fs.unlink(req.file.path, (err) => {
+          if (err) console.error('Error deleting uploaded file:', err);
+        });
+      }
+      
+      res.status(500).json({ 
+        success: false, 
+        message: "Failed to convert PDF to Word. The PDF may be image-based or corrupted." 
+      });
+    }
+  });
+
   // PDF to ZIP pages endpoint
   app.post("/api/pdf-to-zip", upload.single('file'), async (req: MulterRequest, res) => {
     try {
